@@ -1,4 +1,5 @@
 __pycache__/
+.dist_test/
 work_dirs/
 result/
 net.txt
