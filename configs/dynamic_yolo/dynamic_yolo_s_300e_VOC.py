@@ -41,7 +41,7 @@ model = dict(
         drop_rate=0.1,
         drop_path=0.0,
         layer_scale=1.0,
-        num_fusion_block=6,
+        num_fusion_block=4,
         norm_cfg=dict(type='GN', num_groups=1, requires_grad=True),
         act_cfg=dict(type='GELU'),
         ),
