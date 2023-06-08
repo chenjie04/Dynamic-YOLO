@@ -162,9 +162,9 @@ def main():
     print(f'{split_line}\nCompute type: {compute_type}\n'
           f'Input shape: {pad_shape}\nFlops: {flops}\n'
           f'Params: {params}\n{split_line}')
-    print('!!! You should add the flops of dcn v3 manually !!!')
-    print('!!! The flops of dcn v3 is 5 * input_channels * hight * width * kernel_size * kernel_size')
-    print('!!!Please be cautious if you use the results in papers. '
+    print('!!! You should add the flops of dcn v3 manually.')
+    print('!!! The flops of dcn v3 is 5 * input_channels * hight * width * kernel_size * kernel_size.')
+    print('!!! Please be cautious if you use the results in papers. '
           'You may need to check if all ops are supported and verify '
           'that the flops computation is correct.')
 
