@@ -170,7 +170,7 @@ class InternImageBlock(nn.Module):
 
 
 @MODELS.register_module()
-class LightInternImage_v2(BaseModule):
+class LightInternImage(BaseModule):
     r"""LightInternImage
         A light-weight impl of : `InternImage: Exploring Large-Scale Vision Foundation Models with Deformable Convolutions`  -
           https://arxiv.org/pdf/2103.14030

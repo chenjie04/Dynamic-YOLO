@@ -35,7 +35,7 @@ from dcn_v3 import GroupDeformableConvModule
 
 
 @MODELS.register_module()
-class DecoupleHead_v2(ATSSHead):
+class DecoupleHead(ATSSHead):
     """Detection Head of RTMDet.
 
     Args:
@@ -647,7 +647,7 @@ class DecoupleHead_v2(ATSSHead):
 
 
 @MODELS.register_module()
-class SepDecoupleHead_v2(DecoupleHead_v2):
+class SepDecoupleHead(DecoupleHead):
     """
 
     Args:

@@ -136,10 +136,10 @@ print("        starfish: %d %f" % (num_starfish_l, num_starfish_l / large_object
 
 # 构造数据
 labels = ["Small", "Medium", "Large"]
-data_holothurian = [459, 5882, 467]
-data_echinus = [23321, 18923, 711]
-data_scallop = [356, 1221, 130]
-data_starfish = [3969, 8392, 167]
+data_holothurian = [num_holothurian_s, num_holothurian_m, num_holothurian_l]
+data_echinus = [num_echinus_s, num_echinus_m, num_echinus_l]
+data_scallop = [num_scallop_s, num_scallop_m, num_scallop_l]
+data_starfish = [num_starfish_s, num_starfish_m, num_starfish_l]
 
 x = np.arange(len(labels))
 width = 0.1

@@ -19,7 +19,7 @@ model = dict(
         bgr_to_rgb=False,
         batch_augments=None),
     backbone=dict(
-        type='LightInternImage_v2',
+        type='LightInternImage',
         channels=128,
         depths=[8, 8, 4],
         groups=[4, 8, 16],
@@ -33,7 +33,7 @@ model = dict(
         act_cfg=dict(type='GELU'),
         ),
     neck=dict(
-        type="MultiScaleAttentionFusion_v2",
+        type="MultiScaleAttentionFusion",
         in_channels=[128, 256, 512],
         out_channel=128,
         groups=4,
@@ -46,7 +46,7 @@ model = dict(
         act_cfg=dict(type='GELU'),
         ),
     bbox_head=dict(
-        type='SepDecoupleHead_v2',
+        type='SepDecoupleHead',
         num_classes=20,
         in_channels=128,
         feat_channels=128,

@@ -12,7 +12,7 @@ from mmdet.models.layers import DyReLU
 
 
 @MODELS.register_module()
-class MultiScaleAttentionFusion_v2(BaseModule):
+class MultiScaleAttentionFusion(BaseModule):
     """A multi-scale features fusion strategy Base on spatial attention and scale attention.
 
     Args:
@@ -50,7 +50,7 @@ class MultiScaleAttentionFusion_v2(BaseModule):
             nonlinearity="leaky_relu",
         ),
     ):
-        super(MultiScaleAttentionFusion_v2, self).__init__(init_cfg)
+        super(MultiScaleAttentionFusion, self).__init__(init_cfg)
         self.in_channels = in_channels
         self.num_levels = len(in_channels)
         self.num_fusion_block = num_fusion_block
