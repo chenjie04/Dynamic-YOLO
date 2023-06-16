@@ -144,7 +144,7 @@ train_dataloader = dict(
     num_workers=10,
     batch_sampler=None,
     pin_memory=True,
-    dataset=dict(pipeline=train_pipeline,))
+    dataset=dict(filter_cfg=dict(filter_empty_gt=False),pipeline=train_pipeline,))
 
 
 val_dataloader = dict(

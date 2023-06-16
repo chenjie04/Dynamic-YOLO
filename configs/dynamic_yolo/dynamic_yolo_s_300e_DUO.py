@@ -159,6 +159,7 @@ train_dataloader = dict(
         metainfo=metainfo,
         ann_file='annotations/instances_train.json',
         data_prefix=dict(img='images/train/'),
+        filter_cfg=dict(filter_empty_gt=False),
         pipeline=train_pipeline,
         ))
 
