@@ -1,3 +1,5 @@
+# Copyed from: https://gist.github.com/MauroPfister/6643169d1b0d9b656277dbaaa8548745
+
 import torch
 from torch import nn
 import torchvision

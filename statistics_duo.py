@@ -1,3 +1,5 @@
+# Copyright (c) chenjie04. All rights reserved.
+
 from re import I
 from telnetlib import SUPPRESS_LOCAL_ECHO
 from matplotlib import pyplot as plt

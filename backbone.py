@@ -1,3 +1,8 @@
+# Modified from: https://github.com/OpenGVLab/InternImage/blob/master/detection/mmdet_custom/models/backbones/intern_image.py
+#                https://github.com/hunto/LightViT/blob/main/detection/lightvit.py
+# Copyright (c) chenjie04. All rights reserved.
+
+
 import torch
 import torch.nn as nn
 from mmcv.cnn import (

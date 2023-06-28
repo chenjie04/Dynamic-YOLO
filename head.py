@@ -1,4 +1,5 @@
-# Copyright (c) OpenMMLab. All rights reserved.
+# Modified from: https://github.com/open-mmlab/mmdetection/blob/main/mmdet/models/dense_heads/rtmdet_head.py
+# Copyright (c) chenjie04. All rights reserved.
 
 from typing import List, Optional, Tuple, Union
 
@@ -36,7 +37,7 @@ from dcn_v3 import GroupDeformableConvModule
 
 @MODELS.register_module()
 class DecoupleHead(ATSSHead):
-    """Detection Head of RTMDet.
+    """Detection Head of dy_yolo.
 
     Args:
         num_classes (int): Number of categories excluding the background
@@ -125,20 +126,20 @@ class DecoupleHead(ATSSHead):
                 )
 
         pred_pad_size = self.pred_kernel_size // 2
-        self.rtm_cls = nn.Conv2d(
+        self.dy_yolo_cls = nn.Conv2d(
             self.feat_channels,
             self.num_base_priors * self.cls_out_channels,
             self.pred_kernel_size,
             padding=pred_pad_size,
         )
-        self.rtm_reg = nn.Conv2d(
+        self.dy_yolo_reg = nn.Conv2d(
             self.feat_channels,
             self.num_base_priors * 4,
             self.pred_kernel_size,
             padding=pred_pad_size,
         )
         if self.with_objectness:
-            self.rtm_obj = nn.Conv2d(
+            self.dy_yolo_obj = nn.Conv2d(
                 self.feat_channels, 1, self.pred_kernel_size, padding=pred_pad_size
             )
 
@@ -152,10 +153,10 @@ class DecoupleHead(ATSSHead):
             if is_norm(m):
                 constant_init(m, 1)
         bias_cls = bias_init_with_prob(0.01)
-        normal_init(self.rtm_cls, std=0.01, bias=bias_cls)
-        normal_init(self.rtm_reg, std=0.01)
+        normal_init(self.dy_yolo_cls, std=0.01, bias=bias_cls)
+        normal_init(self.dy_yolo_reg, std=0.01)
         if self.with_objectness:
-            normal_init(self.rtm_obj, std=0.01, bias=bias_cls)
+            normal_init(self.dy_yolo_obj, std=0.01, bias=bias_cls)
 
     def forward(self, feats: Tuple[Tensor, ...]) -> tuple:
         """Forward features from the upstream network.
@@ -184,18 +185,18 @@ class DecoupleHead(ATSSHead):
 
             for cls_layer in self.cls_convs:
                 cls_feat = cls_layer(cls_feat)
-            cls_score = self.rtm_cls(cls_feat)
+            cls_score = self.dy_yolo_cls(cls_feat)
 
             for reg_layer in self.reg_convs:
                 reg_feat = reg_layer(reg_feat)
 
             if self.with_objectness:
-                objectness = self.rtm_obj(reg_feat)
+                objectness = self.dy_yolo_obj(reg_feat)
                 cls_score = inverse_sigmoid(
                     sigmoid_geometric_mean(cls_score, objectness)
                 )
 
-            reg_dist = scale(self.rtm_reg(reg_feat).exp()).float() * stride[0]
+            reg_dist = scale(self.dy_yolo_reg(reg_feat).exp()).float() * stride[0]
 
             cls_scores.append(cls_score)
             bbox_preds.append(reg_dist)
@@ -561,7 +562,7 @@ class DecoupleHead(ATSSHead):
         label_weights = anchors.new_zeros(
             num_valid_anchors, dtype=torch.float
         )  # 标签权重初始化为0
-        assign_metrics = anchors.new_zeros(  # 分配指标初始化为0，指示分配质量好不好，因为RTMDet采用的分类损失函数为'QualityFocalLoss'，这是用来计算分类损失的
+        assign_metrics = anchors.new_zeros(  # 分配指标初始化为0，指示分配质量好不好，因为dy_yolo采用的分类损失函数为'QualityFocalLoss'，这是用来计算分类损失的
             num_valid_anchors, dtype=torch.float
         )
 
@@ -692,11 +693,11 @@ class SepDecoupleHead(DecoupleHead):
         self.cls_convs = nn.ModuleList()
         self.reg_convs = nn.ModuleList()
 
-        self.rtm_cls = nn.ModuleList()
-        self.rtm_reg = nn.ModuleList()
+        self.dy_yolo_cls = nn.ModuleList()
+        self.dy_yolo_reg = nn.ModuleList()
 
         if self.with_objectness:
-            self.rtm_obj = nn.ModuleList()
+            self.dy_yolo_obj = nn.ModuleList()
 
         for n in range(len(self.prior_generator.strides)):
             cls_convs = nn.ModuleList()
@@ -735,20 +736,20 @@ class SepDecoupleHead(DecoupleHead):
             self.cls_convs.append(cls_convs)
             self.reg_convs.append(reg_convs)
 
-            self.rtm_cls.append(
+            self.dy_yolo_cls.append(
                 nn.Conv2d(
                     self.feat_channels,
                     self.num_base_priors * self.cls_out_channels,
                     self.pred_kernel_size,
                     padding=self.pred_kernel_size // 2))
-            self.rtm_reg.append(
+            self.dy_yolo_reg.append(
                 nn.Conv2d(
                     self.feat_channels,
                     self.num_base_priors * 4,
                     self.pred_kernel_size,
                     padding=self.pred_kernel_size // 2))
             if self.with_objectness:
-                self.rtm_obj.append(
+                self.dy_yolo_obj.append(
                     nn.Conv2d(
                         self.feat_channels,
                         1,
@@ -771,12 +772,12 @@ class SepDecoupleHead(DecoupleHead):
             if is_norm(m):
                 constant_init(m, 1)
         bias_cls = bias_init_with_prob(0.01)
-        for rtm_cls, rtm_reg in zip(self.rtm_cls, self.rtm_reg):
-            normal_init(rtm_cls, std=0.01, bias=bias_cls)
-            normal_init(rtm_reg, std=0.01)
+        for dy_yolo_cls, dy_yolo_reg in zip(self.dy_yolo_cls, self.dy_yolo_reg):
+            normal_init(dy_yolo_cls, std=0.01, bias=bias_cls)
+            normal_init(dy_yolo_reg, std=0.01)
         if self.with_objectness:
-            for rtm_obj in self.rtm_obj:
-                normal_init(rtm_obj, std=0.01, bias=bias_cls)
+            for dy_yolo_obj in self.dy_yolo_obj:
+                normal_init(dy_yolo_obj, std=0.01, bias=bias_cls)
 
     def forward(self, feats: Tuple[Tensor, ...]) -> tuple:
         """Forward features from the upstream network.
@@ -805,20 +806,20 @@ class SepDecoupleHead(DecoupleHead):
 
             for cls_layer in self.cls_convs[idx]:
                 cls_feat = cls_layer(cls_feat)
-            cls_score = self.rtm_cls[idx](cls_feat)
+            cls_score = self.dy_yolo_cls[idx](cls_feat)
 
             for reg_layer in self.reg_convs[idx]:
                 reg_feat = reg_layer(reg_feat)
 
 
             if self.with_objectness:
-                objectness = self.rtm_obj[idx](reg_feat)
+                objectness = self.dy_yolo_obj[idx](reg_feat)
                 cls_score = inverse_sigmoid(
                     sigmoid_geometric_mean(cls_score, objectness))
             if self.exp_on_reg:
-                reg_dist = self.rtm_reg[idx](reg_feat).exp() * stride[0]
+                reg_dist = self.dy_yolo_reg[idx](reg_feat).exp() * stride[0]
             else:
-                reg_dist = self.rtm_reg[idx](reg_feat) * stride[0]
+                reg_dist = self.dy_yolo_reg[idx](reg_feat) * stride[0]
             cls_scores.append(cls_score)
             bbox_preds.append(reg_dist)
 

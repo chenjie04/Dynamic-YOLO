@@ -1,4 +1,6 @@
-# Copyright (c) OpenMMLab. All rights reserved.
+# Modified from: https://github.com/open-mmlab/mmdetection/blob/main/mmdet/models/necks/dyhead.py
+# Copyright (c) chenjie04. All rights reserved.
+
 
 import math
 import torch.nn as nn
