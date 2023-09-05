@@ -150,7 +150,7 @@ width = 0.15
 # plots
 fig, ax = plt.subplots(figsize=(5, 3), dpi=200)
 bar_a = ax.bar(
-    index - width / 2,
+    index - width * 3 /2,
     data_holothurian,
     width,
     label="holothurian",
@@ -159,7 +159,7 @@ bar_a = ax.bar(
     lw=0.5,
 )
 bar_b = ax.bar(
-    index + width / 2,
+    index - width / 2,
     data_echinus,
     width,
     label="echinus",
@@ -168,7 +168,7 @@ bar_b = ax.bar(
     lw=0.5,
 )
 bar_c = ax.bar(
-    index + width * 3 / 2,
+    index + width / 2,
     data_scallop,
     width,
     label="scallop",
@@ -177,7 +177,7 @@ bar_c = ax.bar(
     lw=0.5,
 )
 bar_d = ax.bar(
-    index + width * 5 / 2,
+    index + width * 3 / 2,
     data_starfish,
     width,
     label="starfish",
@@ -208,16 +208,16 @@ per_starfish = [round(num_starfish_s / total_starfish, 2), round(num_starfish_m 
 
 print("per_starfish = ", per_starfish)
 
-for a, b, c in zip(index - width / 2, data_holothurian, per_holothurian):
+for a, b, c in zip(index - width * 3 /2, data_holothurian, per_holothurian):
     ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
 
-for a, b, c in zip(index + width / 2, data_echinus, per_echinus):
+for a, b, c in zip(index - width / 2, data_echinus, per_echinus):
     ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
 
-for a, b, c in zip(index + width * 3 / 2, data_scallop, per_scallop):
+for a, b, c in zip(index + width / 2, data_scallop, per_scallop):
     ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
 
-for a, b, c in zip(index + width * 5 / 2, data_starfish, per_starfish):
+for a, b, c in zip(index + width * 3 / 2, data_starfish, per_starfish):
     ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
 
 # 定制化设计
