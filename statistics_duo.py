@@ -143,14 +143,14 @@ data_echinus = [num_echinus_s, num_echinus_m, num_echinus_l]
 data_scallop = [num_scallop_s, num_scallop_m, num_scallop_l]
 data_starfish = [num_starfish_s, num_starfish_m, num_starfish_l]
 
-x = np.arange(len(labels))
-width = 0.1
+index = np.arange(len(labels))
+width = 0.15
 
 # plt.rcParams["font.family"] = "Times New Roman"
 # plots
 fig, ax = plt.subplots(figsize=(5, 3), dpi=200)
 bar_a = ax.bar(
-    x - width / 2,
+    index - width / 2,
     data_holothurian,
     width,
     label="holothurian",
@@ -159,7 +159,7 @@ bar_a = ax.bar(
     lw=0.5,
 )
 bar_b = ax.bar(
-    x + width / 2,
+    index + width / 2,
     data_echinus,
     width,
     label="echinus",
@@ -168,7 +168,7 @@ bar_b = ax.bar(
     lw=0.5,
 )
 bar_c = ax.bar(
-    x + width * 3 / 2,
+    index + width * 3 / 2,
     data_scallop,
     width,
     label="scallop",
@@ -177,7 +177,7 @@ bar_c = ax.bar(
     lw=0.5,
 )
 bar_d = ax.bar(
-    x + width * 5 / 2,
+    index + width * 5 / 2,
     data_starfish,
     width,
     label="starfish",
@@ -186,11 +186,45 @@ bar_d = ax.bar(
     lw=0.5,
 )
 
+#柱子上的数字显示
+total_holothurian = num_holothurian_s + num_holothurian_m + num_holothurian_l
+total_echinus = num_echinus_s + num_echinus_m + num_echinus_l
+total_scallop = num_scallop_s + num_scallop_m + num_scallop_l
+total_starfish = num_starfish_s + num_starfish_m + num_starfish_l
+
+per_holothurian = [round(num_holothurian_s / total_holothurian, 2), round(num_holothurian_m / total_holothurian, 2), round(num_holothurian_l / total_holothurian, 2)]
+
+print("per_holothurian = ", per_holothurian)
+
+per_echinus = [round(num_echinus_s / total_echinus, 2), round(num_echinus_m / total_echinus, 2), round(num_echinus_l / total_echinus, 2)]
+
+print("per_echinus = ", per_echinus)
+
+per_scallop = [round(num_scallop_s / total_scallop, 2), round(num_scallop_m / total_scallop, 2), round(num_scallop_l / total_scallop, 2)]
+
+print("per_scallop = ", per_scallop)
+
+per_starfish = [round(num_starfish_s / total_starfish, 2), round(num_starfish_m / total_starfish, 2), round(num_starfish_l / total_starfish, 2)]
+
+print("per_starfish = ", per_starfish)
+
+for a, b, c in zip(index - width / 2, data_holothurian, per_holothurian):
+    ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
+
+for a, b, c in zip(index + width / 2, data_echinus, per_echinus):
+    ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
+
+for a, b, c in zip(index + width * 3 / 2, data_scallop, per_scallop):
+    ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
+
+for a, b, c in zip(index + width * 5 / 2, data_starfish, per_starfish):
+    ax.text(a, b, '%.2f'%c, ha="center", va="bottom", fontsize=6)
+
 # 定制化设计
 ax.tick_params(axis="x", direction="in", bottom=False)
 ax.tick_params(axis="y", direction="out", labelsize=8, length=3)
 ax.set_ylabel("Number of objects", fontsize = 'small')
-ax.set_xticks(x)
+ax.set_xticks(index)
 ax.set_xticklabels(labels,fontsize = 'small')
 
 for spine in ["top", "right"]:
