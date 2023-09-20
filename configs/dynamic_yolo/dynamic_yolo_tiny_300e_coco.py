@@ -19,14 +19,14 @@ model = dict(
         bgr_to_rgb=False,
         batch_augments=None),
     backbone=dict(
-        type='LightInternImage',
-        channels=128,
-        depths=[8, 8, 4],
-        groups=[4, 8, 16],
+        type='LightInternImage', 
+        channels=96,
+        depths=[6, 6, 4], 
+        groups=[3, 6, 12],
         mlp_ratios=[1.0, 1.0, 1.0],
-        drop_rate=0.1,
-        drop_path_rate=0.1,
-        layer_scale=1.0,
+        drop_rate=0.0,
+        drop_path_rate=0.0,
+        layer_scale=None,
         post_norm=False,
         out_indices=(0, 1, 2),
         norm_cfg=dict(type='GN', num_groups=1, requires_grad=True),
@@ -34,9 +34,9 @@ model = dict(
         ),
     neck=dict(
         type="MultiScaleAttentionFusion",
-        in_channels=[128, 256, 512],
-        out_channel=128,
-        groups=4,
+        in_channels=[96, 192, 384],
+        out_channel=96,
+        groups=3,
         mlp_ratio=1.0,
         drop_rate=0.0,
         drop_path=0.0,
@@ -47,14 +47,14 @@ model = dict(
         ),
     bbox_head=dict(
         type='SepDecoupleHead',
-        num_classes=20,
-        in_channels=128,
-        feat_channels=128,
-        groups=4,
+        num_classes=80,
+        in_channels=96,
+        feat_channels=96,
+        groups=3,
         mlp_ratio=1.0,
-        drop_rate=0.1,
+        drop_rate=0.0,
         drop_path=0.0,
-        layer_scale=1.0,
+        layer_scale=None,
         stacked_convs=2,
         norm_cfg=dict(type='GN', num_groups=1, requires_grad=True),
         act_cfg=dict(type='GELU'),
@@ -84,37 +84,8 @@ model = dict(
         max_per_img=300),
     )
 
-# dataset settings
-data_root = "../data/VOCdevkit/"
-dataset_type = "CocoDataset"
 
-classes = (
-    "aeroplane",
-    "bicycle",
-    "bird",
-    "boat",
-    "bottle",
-    "bus",
-    "car",
-    "cat",
-    "chair",
-    "cow",
-    "diningtable",
-    "dog",
-    "horse",
-    "motorbike",
-    "person",
-    "pottedplant",
-    "sheep",
-    "sofa",
-    "train",
-    "tvmonitor",
-)
-
-metainfo=dict(classes=classes)
-
-file_client_args = dict(backend='disk')
-
+# pipeline settings
 train_pipeline = [
     dict(
         type='LoadImageFromFile',
@@ -170,62 +141,32 @@ test_pipeline = [
 ]
 
 train_dataloader = dict(
-    batch_size=8,
-    num_workers=10,
+    batch_size=16,
+    num_workers=8,
     batch_sampler=None,
     pin_memory=True,
-    dataset=dict(type=dataset_type,
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='voc0712_train.json',
-        data_prefix=dict(img=''),
-        filter_cfg=dict(filter_empty_gt=False),
-        pipeline=train_pipeline))
+    prefetch_factor=4,
+    dataset=dict(filter_cfg=dict(filter_empty_gt=False),pipeline=train_pipeline,))
 
 
 val_dataloader = dict(
-    batch_size=5,
-    num_workers=10,
+    batch_size=8,
+    num_workers=8,
     persistent_workers=True,
-    pin_memory=True,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False),
-    dataset=dict(
-        type=dataset_type,
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='voc0712_val.json',
-        data_prefix=dict(img=''),
-        test_mode=True,
-        pipeline=test_pipeline))
+    dataset=dict(pipeline=test_pipeline))
 
 test_dataloader = dict(
-    batch_size=5,
-    num_workers=10,
+    batch_size=1,
+    num_workers=2,
     persistent_workers=True,
-    pin_memory=True,
     drop_last=False,
     sampler=dict(type='DefaultSampler', shuffle=False),
-    dataset=dict(
-        type=dataset_type,
-        data_root=data_root,
-        metainfo=metainfo,
-        ann_file='voc07_test.json',
-        data_prefix=dict(img=''),
-        test_mode=True,
-        pipeline=test_pipeline))
+    dataset=dict(pipeline=test_pipeline))
 
-val_evaluator = dict(
-    type='CocoMetric',
-    ann_file=data_root + 'voc0712_val.json',
-    metric='bbox',
-    proposal_nums=(100, 1, 10))
-test_evaluator = dict(
-    _delete_=True,
-    type='CocoMetric',
-    ann_file=data_root + 'voc07_test.json',
-    metric='bbox',
-    proposal_nums=(100, 1, 10))
+val_evaluator = dict(proposal_nums=(100, 1, 10))
+test_evaluator = dict(proposal_nums=(100, 1, 10))
 
 # training settings
 max_epochs = 300
@@ -236,13 +177,14 @@ interval = 10
 train_cfg = dict(
     max_epochs=max_epochs,
     val_interval=interval,
-    dynamic_intervals=[(max_epochs - stage2_num_epochs, 1)])
+    dynamic_intervals=[(max_epochs - stage2_num_epochs, 1)],
+    )
 
 # optimizer
 optim_wrapper = dict(
     _delete_=True,
     type='AmpOptimWrapper',
-    dtype='float16', # valid values: ('float16', 'bfloat16', None)
+    dtype='float16',
     optimizer=dict(type='AdamW', lr=base_lr, weight_decay=0.05),
     paramwise_cfg=dict(
         norm_decay_mult=0, bias_decay_mult=0, bypass_duplicate=True),
@@ -256,7 +198,7 @@ param_scheduler = [
         start_factor=1.0e-5,
         by_epoch=False,
         begin=0,
-        end=1000), 
+        end=1000),
     dict(
         # use cosine lr from 150 to 300 epoch
         type='CosineAnnealingLR',
@@ -292,7 +234,6 @@ custom_hooks = [
 
 auto_scale_lr = dict(enable=False, base_batch_size=16)
 
-
-vis_backends = [dict(type='LocalVisBackend'), dict(type='WandbVisBackend',  init_kwargs=dict(magic=True, project="Dynamic-YOLO-VOC"))]
+vis_backends = [dict(type='LocalVisBackend'), dict(type='WandbVisBackend',  init_kwargs=dict(magic=True, project="Dynamic-YOLO-COCO"))] 
 visualizer = dict(
     type='DetLocalVisualizer', vis_backends=vis_backends, name='visualizer', save_dir='result')

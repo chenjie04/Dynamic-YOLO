@@ -296,3 +296,6 @@ auto_scale_lr = dict(enable=False, base_batch_size=16)
 vis_backends = [dict(type='LocalVisBackend'), dict(type='WandbVisBackend',  init_kwargs=dict(magic=True, project="Dynamic-YOLO-VOC"))]
 visualizer = dict(
     type='DetLocalVisualizer', vis_backends=vis_backends, name='visualizer', save_dir='result')
+
+load_from = "work_dirs/dynamic_yolo_s_300e_VOC_attention_ablation_scale_spatial/epoch_90.pth"
+resume = True
