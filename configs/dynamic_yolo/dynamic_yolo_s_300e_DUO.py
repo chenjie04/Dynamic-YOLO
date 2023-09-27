@@ -29,7 +29,7 @@ model = dict(
         layer_scale=1.0,
         post_norm=False,
         out_indices=(0, 1, 2),
-        norm_cfg=dict(type='GN', num_groups=1, requires_grad=True),
+        norm_cfg=dict(type='GN', num_groups=4, requires_grad=True),
         act_cfg=dict(type='GELU'),
         ),
     neck=dict(
@@ -42,7 +42,7 @@ model = dict(
         drop_path=0.0,
         layer_scale=1.0,
         num_fusion_block=4,
-        norm_cfg=dict(type='GN', num_groups=1, requires_grad=True),
+        norm_cfg=dict(type='GN', num_groups=4, requires_grad=True),
         act_cfg=dict(type='GELU'),
         ),
     bbox_head=dict(
@@ -56,7 +56,7 @@ model = dict(
         drop_path=0.0,
         layer_scale=1.0,
         stacked_convs=2,
-        norm_cfg=dict(type='GN', num_groups=1, requires_grad=True),
+        norm_cfg=dict(type='GN', num_groups=4, requires_grad=True),
         act_cfg=dict(type='GELU'),
         anchor_generator=dict(
             type='MlvlPointGenerator', offset=0, strides=[8, 16, 32]),

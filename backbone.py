@@ -224,7 +224,7 @@ class LightInternImage(BaseModule):
 
         in_chans = 3
         self.patch_embed = StemLayer(
-            in_chans=in_chans, embed_dim=channels, act_cfg=act_cfg, norm_cfg=norm_cfg
+            in_chans=in_chans, embed_dim=channels, act_cfg=act_cfg, norm_cfg=dict(type='GN', num_groups=int(channels/32), requires_grad=True)
         )
         self.pos_drop = nn.Dropout(p=pos_drop_rate)
 
@@ -243,7 +243,7 @@ class LightInternImage(BaseModule):
                 drop_rate=drop_rate,
                 drop_path=dpr[sum(depths[:i]) : sum(depths[: i + 1])],
                 act_cfg=act_cfg,
-                norm_cfg=norm_cfg,
+                norm_cfg=dict(type='GN', num_groups=groups[i], requires_grad=True),
                 post_norm=post_norm,
                 downsample=(i < self.num_levels - 1),
                 layer_scale=layer_scale,

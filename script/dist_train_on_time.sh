@@ -10,4 +10,4 @@ tmux send-keys "pwd" C-m
 
 tmux send-keys "source /home/chenjie04/anaconda3/bin/activate mmdet-3.0" C-m
 
-tmux send-keys "bash /home/chenjie04/workstation/Dynamic-YOLO/dist_train.sh /home/chenjie04/workstation/Dynamic-YOLO/configs/dynamic_yolo/dynamic_yolo_tiny_300e_coco.py 2" C-m
+tmux send-keys "bash /home/chenjie04/workstation/Dynamic-YOLO/dist_train.sh /home/chenjie04/workstation/Dynamic-YOLO/configs/dynamic_yolo/dynamic_yolo_s_300e_VOC.py 2" C-m

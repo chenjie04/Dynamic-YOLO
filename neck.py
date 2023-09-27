@@ -11,7 +11,7 @@ from mmdet.registry import MODELS
 from mmdet.utils import ConfigType, OptMultiConfig
 from dcn_v3 import GroupDeformableConvModule
 from mmdet.models.layers import DyReLU
-from mmcv.ops.modulated_deform_conv import ModulatedDeformConv2d
+from mmcv.ops.modulated_deform_conv import ModulatedDeformConv2dPack
 
 
 @MODELS.register_module()
@@ -245,12 +245,12 @@ class MultiScaleAttentionFusion_test(BaseModule):
         # 初始融合
         for level in range(self.num_levels):
             spatial_attn = nn.Sequential(
-                ModulatedDeformConv2d(
+                ModulatedDeformConv2dPack(
                     in_channels[level],
                     out_channel,
                     3,
                     padding=1,
-                    deform_groups=in_channels[level] / 32,
+                    deform_groups=int(in_channels[level] / 32),
                     bias=False,
                 ),
                 build_norm_layer(norm_cfg, out_channel)[1],
