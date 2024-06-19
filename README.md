@@ -98,3 +98,18 @@ python train.py configs/dynamic_yolo/dynamic_yolo_s_300e_DUO.py
 ```bash
 python test.py configs/dynamic_yolo/dynamic_yolo_s_300e_DUO.py work_dirs/dynamic_yolo_s_300e_DUO/epoch_300.pth
 ```
+
+## Citation
+If you find this project useful in your research, please consider cite:
+```
+@article{chen2024dynamic,
+  title={Dynamic YOLO for small underwater object detection},
+  author={Chen, Jie and Er, Meng Joo},
+  journal={Artificial Intelligence Review},
+  volume={57},
+  number={7},
+  pages={1--23},
+  year={2024},
+  publisher={Springer}
+}
+```

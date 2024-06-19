@@ -137,7 +137,7 @@ print("        starfish: %d %f" % (num_starfish_l, num_starfish_l / large_object
 #         starfish: 167 0.113220
 
 # 构造数据
-labels = ["Small", "Medium", "Large"]
+labels = ["Small (0.44)", "Medium (0.54)", "Large (0.02)"]
 data_holothurian = [num_holothurian_s, num_holothurian_m, num_holothurian_l]
 data_echinus = [num_echinus_s, num_echinus_m, num_echinus_l]
 data_scallop = [num_scallop_s, num_scallop_m, num_scallop_l]
