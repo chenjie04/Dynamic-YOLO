@@ -1,8 +1,9 @@
 _base_ = ['../_base_/default_runtime.py', '../_base_/det_p5_tta.py']
+default_scope = 'mmyolo'
 
 # ========================Frequently modified parameters======================
 # -----data related-----
-data_root = 'data/DUO/'  # Root path of data
+data_root = '../data/DUO/'  # Root path of data
 # Path of train annotation file
 train_ann_file = 'annotations/instances_train.json'
 train_data_prefix = 'images/train/'  # Prefix of train image path
@@ -38,7 +39,7 @@ model_test_cfg = dict(
 # -----data related-----
 img_scale = (640, 640)  # width, height
 # Dataset type, this will be used to define the dataset
-dataset_type = 'YOLOv5CocoDataset'
+dataset_type = 'mmyolo.YOLOv5CocoDataset'
 # Batch size of a single GPU during validation
 val_batch_size_per_gpu = 5
 # Worker to pre-fetch data for each single GPU during validation
@@ -96,14 +97,14 @@ env_cfg = dict(cudnn_benchmark=True)
 
 # ===============================Unmodified in most cases====================
 model = dict(
-    type='YOLODetector',
+    type='mmyolo.YOLODetector',
     data_preprocessor=dict(
-        type='YOLOv5DetDataPreprocessor',
+        type='mmyolo.YOLOv5DetDataPreprocessor',
         mean=[0., 0., 0.],
         std=[255., 255., 255.],
         bgr_to_rgb=True),
     backbone=dict(
-        type='YOLOv8CSPDarknet',
+        type='mmyolo.YOLOv8CSPDarknet',
         arch='P5',
         last_stage_out_channels=last_stage_out_channels,
         deepen_factor=deepen_factor,
@@ -111,7 +112,7 @@ model = dict(
         norm_cfg=norm_cfg,
         act_cfg=dict(type='SiLU', inplace=True)),
     neck=dict(
-        type='YOLOv8PAFPN',
+        type='mmyolo.YOLOv8PAFPN',
         deepen_factor=deepen_factor,
         widen_factor=widen_factor,
         in_channels=[256, 512, last_stage_out_channels],
@@ -120,9 +121,9 @@ model = dict(
         norm_cfg=norm_cfg,
         act_cfg=dict(type='SiLU', inplace=True)),
     bbox_head=dict(
-        type='YOLOv8Head',
+        type='mmyolo.YOLOv8Head',
         head_module=dict(
-            type='YOLOv8HeadModule',
+            type='mmyolo.YOLOv8HeadModule',
             num_classes=num_classes,
             in_channels=[256, 512, last_stage_out_channels],
             widen_factor=widen_factor,
@@ -185,7 +186,7 @@ last_transform = [
             'img': 'image',
             'gt_bboxes': 'bboxes'
         }),
-    dict(type='YOLOv5HSVRandomAug'),
+    dict(type='mmyolo.YOLOv5HSVRandomAug'),
     dict(type='mmdet.RandomFlip', prob=0.5),
     dict(
         type='mmdet.PackDetInputs',
@@ -201,7 +202,7 @@ train_pipeline = [
         pad_val=114.0,
         pre_transform=pre_transform),
     dict(
-        type='YOLOv5RandomAffine',
+        type='mmyolo.YOLOv5RandomAffine',
         max_rotate_degree=0.0,
         max_shear_degree=0.0,
         scaling_ratio_range=(1 - affine_scale, 1 + affine_scale),
@@ -214,14 +215,14 @@ train_pipeline = [
 
 train_pipeline_stage2 = [
     *pre_transform,
-    dict(type='YOLOv5KeepRatioResize', scale=img_scale),
+    dict(type='mmyolo.YOLOv5KeepRatioResize', scale=img_scale),
     dict(
-        type='LetterResize',
+        type='mmyolo.LetterResize',
         scale=img_scale,
         allow_scale_up=True,
         pad_val=dict(img=114.0)),
     dict(
-        type='YOLOv5RandomAffine',
+        type='mmyolo.YOLOv5RandomAffine',
         max_rotate_degree=0.0,
         max_shear_degree=0.0,
         scaling_ratio_range=(1 - affine_scale, 1 + affine_scale),
@@ -235,7 +236,7 @@ train_dataloader = dict(
     persistent_workers=persistent_workers,
     pin_memory=True,
     sampler=dict(type='DefaultSampler', shuffle=True),
-    collate_fn=dict(type='yolov5_collate'),
+    collate_fn=dict(type='mmyolo.yolov5_collate'),
     dataset=dict(
         type=dataset_type,
         data_root=data_root,
@@ -246,9 +247,9 @@ train_dataloader = dict(
 
 test_pipeline = [
     dict(type='LoadImageFromFile', backend_args=_base_.backend_args),
-    dict(type='YOLOv5KeepRatioResize', scale=img_scale),
+    dict(type='mmyolo.YOLOv5KeepRatioResize', scale=img_scale),
     dict(
-        type='LetterResize',
+        type='mmyolo.LetterResize',
         scale=img_scale,
         allow_scale_up=False,
         pad_val=dict(img=114)),
@@ -288,11 +289,11 @@ optim_wrapper = dict(
         weight_decay=weight_decay,
         nesterov=True,
         batch_size_per_gpu=train_batch_size_per_gpu),
-    constructor='YOLOv5OptimizerConstructor')
+    constructor='mmyolo.YOLOv5OptimizerConstructor')
 
 default_hooks = dict(
     param_scheduler=dict(
-        type='YOLOv5ParamSchedulerHook',
+        type='mmyolo.YOLOv5ParamSchedulerHook',
         scheduler_type='linear',
         lr_factor=lr_factor,
         max_epochs=max_epochs),
